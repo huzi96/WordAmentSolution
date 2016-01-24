@@ -5,11 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFTrial"
         mc:Ignorable="d"
-        Title="MainWindow" Height="599.574" Width="525">
-    <Grid Margin="0,0,-5,-18">
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="27" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="174" Margin="10,10,0,0"/>
-        <Button x:Name="button" Content="Generate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Margin="10,42,0,0" Click="button_Click"/>
-        <TextBox x:Name="textBlock" HorizontalAlignment="Left" Height="551" Margin="207,10,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="303" HorizontalScrollBarVisibility="Auto"/>
+        Title="MainWindow" Height="436.824" Width="525">
+    <Grid Margin="0,0,-5,-17.5" RenderTransformOrigin="0.485,0.831">
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="37" TextWrapping="Wrap" Text="Write 16 letters to suggest the 4x4 blocks" VerticalAlignment="Top" Width="285" Margin="10,10,0,0" TextChanged="textBox_TextChanged"/>
+        <Button x:Name="button" Content="Generate word list" HorizontalAlignment="Left" VerticalAlignment="Top" Width="285" Margin="10,52,0,0" Click="button_Click"/>
+        <Button x:Name="button_prev" Content="Previous" HorizontalAlignment="Left" Margin="300,368,0,0" VerticalAlignment="Top" Width="74" Background="#FF4CA5FD" BorderBrush="{x:Null}" Click="button_prev_Click"/>
+        <Button x:Name="button1_Copy" Content="Next" HorizontalAlignment="Left" Margin="436,368,0,0" VerticalAlignment="Top" Width="74" Click="button1_Copy_Click"/>
+        <Canvas x:Name="canvas_blks" HorizontalAlignment="Left" Height="278" VerticalAlignment="Top" Width="285" Margin="10,76,0,0"/>
+        <RichTextBox x:Name="textBlock" HorizontalAlignment="Left" Height="344" Margin="300,10,0,0" VerticalAlignment="Top" Width="210" AcceptsTab="True" FontSize="16" Block.LineHeight="1" TextChanged="textBlock_TextChanged">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="RichTextBox"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
 
     </Grid>
 </Window>

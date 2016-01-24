@@ -22,19 +22,45 @@ namespace WPFTrial
     public partial class MainWindow : Window
     {
         Trie trie;
+        int pageSize = 16, pageNum = 0;
         public MainWindow()
         {
             InitializeComponent();
             trie = new Trie();
             trie.init("shrink.txt");
-            dirs[0] = new KeyValuePair<int, int>(0, 1);
-            dirs[1] = new KeyValuePair<int, int>(1, 0);
-            dirs[2] = new KeyValuePair<int, int>(0, -1);
-            dirs[3] = new KeyValuePair<int, int>(-1, 0);
-            dirs[4] = new KeyValuePair<int, int>(1, 1);
-            dirs[5] = new KeyValuePair<int, int>(-1, -1);
-            dirs[6] = new KeyValuePair<int, int>(1, -1);
-            dirs[7] = new KeyValuePair<int, int>(-1, 1);
+            InitDirs();
+            InitBlocks();
+        }
+        private void InitBlocks()
+        {
+            int blkScale = 4;
+            int width = (int)canvas_blks.Width/4, height = width;
+            int ofs = 4;
+            for (int j = 0; j < blkScale; j++)
+            {
+                for (int i = 0; i < blkScale; i++)
+                {
+                    Button lb = new Button();
+                    lb.Padding = new Thickness((width/4 + ofs), (width / 4-ofs), (width / 4 + ofs),(width / 4-ofs));
+                    lb.Content = " ";
+                    lb.Background = (Brush)new BrushConverter().ConvertFromString("#FFFFFFFF");
+                    lb.FontFamily = new FontFamily("Consolas");
+                    lb.FontSize = 28;
+                    Canvas.SetLeft(lb, i * width);
+                    Canvas.SetTop(lb, j * height);
+                    canvas_blks.Children.Add(lb);
+                }
+            }
+            
+        }
+        private void InitDirs()
+        {
+            int[,] dir_ints = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 },
+            {1,1 }, {-1,-1 }, {1,-1 }, {-1,1 } };
+            for (int i = 0; i < dir_ints.Length/2; i++)
+            {
+                dirs[i] = new KeyValuePair<int, int>(dir_ints[i, 0], dir_ints[i, 1]);
+            }
         }
 
         char[,] blocks = new char[4, 4];
@@ -42,6 +68,7 @@ namespace WPFTrial
         List<string> results = new List<string>();
         bool[,] visited = new bool[4, 4];
         char[] crt_str = new char[18];
+
         KeyValuePair<int, int>[] dirs = new KeyValuePair<int, int>[8]; 
         void dfs(int x,int y, int len)
         {
@@ -88,8 +115,8 @@ namespace WPFTrial
         private void button_Click(object sender, RoutedEventArgs e)
         {
             //读取字符串构建方格
-            string s_ori = textBox.Text;
-            if (s_ori.Length!=16)
+            string s_ori = textBox.Text.ToLower();
+            if (s_ori.Length != 16)
             {
                 return;
             }
@@ -121,12 +148,65 @@ namespace WPFTrial
                 }
             }
             results.Sort(new LenComp());
-            textBlock.Clear();
-            foreach (var item in results)
+            showPage();
+        }
+
+        private void showPage()
+        {
+            textBlock.SelectAll();
+            TextRange range = new TextRange(textBlock.Selection.Start, textBlock.Selection.End);
+            range.Text = "";
+            for (int i = pageNum * pageSize; i < pageNum * pageSize + pageSize; i++)
             {
-                textBlock.Text += ("\n" + item);
+                if (i >= results.Count)
+                {
+                    break;
+                }
+                range.Text += results[i]+"\n";
             }
         }
 
+        private void button_prev_Click(object sender, RoutedEventArgs e)
+        {
+            if (pageNum>0)
+            {
+                pageNum--;
+                showPage();
+            }
+        }
+
+        private void button1_Copy_Click(object sender, RoutedEventArgs e)
+        {
+            pageNum++;
+            showPage();
+        }
+
+        private void textBlock_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void textBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (this.textBox.Text.Length > 16)
+            {
+                return;
+            }
+            for (int i = 0; i < textBox.Text.Length; i++)
+            {
+                Button btn = canvas_blks.Children[i] as Button;
+                char c = textBox.Text[i];
+                if (textBox.Text[i]<='z'&&textBox.Text[i]>='a')
+                {
+                    c -= (char)('a' - 'A');
+                }
+                btn.Content = c;
+            }
+            for (int i = textBox.Text.Length; i < canvas_blks.Children.Count; i++)
+            {
+                Button btn = canvas_blks.Children[i] as Button;
+                btn.Content = " ";
+            }
+        }
     }
 }
